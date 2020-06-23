@@ -44,9 +44,9 @@ class SingleDirectionSinchronizator
     public function __construct(
         $existedModels,
         $importedModels,
-        $importModelUniqIdField = 'import_id',
+        array $importModelUniqIdField = ['import_id'],
         $checksumFieldName = 'checksum',
-        $checksumFields = ['id']
+        array $checksumFields = ['id']
     ) {
         $this->existedModels = $existedModels;
         $this->importedModels = $importedModels;
@@ -65,14 +65,14 @@ class SingleDirectionSinchronizator
         $importedModels = $this->indexByField($this->importModelUniqIdField, $this->importedModels);
         $toCreateModels = $toUpdateModels = [];
 
-        foreach ($importedModels as $importedModel) {
+        foreach ($importedModels as $importedModelUniqKey => $importedModel) {
             $importedModel[$this->checksumFieldName] = $this->generateChecksumHash($importedModel);
 
-            if (isset($existedModels[$importedModel[$this->importModelUniqIdField]])) {
-                $existedModel = $existedModels[$importedModel[$this->importModelUniqIdField]];
+            if (isset($existedModels[$importedModelUniqKey])) {
+                $existedModel = $existedModels[$importedModelUniqKey];
 
                 if (!isset($existedModel[$this->checksumFieldName])) {
-                    throw new Exception("There are no checksum field {$this->checksumFieldName} in existed model, impossible to handly synchronization");
+                    throw new Exception("There are no checksum field {$this->checksumFieldName} in existed model, impossible to handle synchronization");
                 }
 
                 if ($importedModel[$this->checksumFieldName] !== $existedModel[$this->checksumFieldName]) {
@@ -81,7 +81,7 @@ class SingleDirectionSinchronizator
                     // If checksums are equal, then just skip it
                 }
 
-                unset($existedModels[$importedModel[$this->importModelUniqIdField]]);
+                unset($existedModels[$this->modelIndexKey($this->importModelUniqIdField, $importedModel)]);
             } else {
                 $toCreateModels[] = $importedModel;
             }
@@ -121,16 +121,36 @@ class SingleDirectionSinchronizator
      */
     private function indexByField($fieldName, $array)
     {
-        if (isset($array[0][$fieldName])) {
-            throw new Exception("Threre are no field with name $fieldName, impossible to index");
-        }
-
         $result = [];
 
         foreach ($array as $item) {
-            $result[$item[$fieldName]] = $item;
+            $result[$this->modelIndexKey($fieldName, $item)] = $item;
         }
 
         return $result;
+    }
+
+    /**
+     * @param $fieldsData
+     * @param $model
+     * @return string
+     * @throws Exception
+     */
+    private function modelIndexKey($fieldsData, $model)
+    {
+        $keyParts = [];
+
+        foreach ($model as $key => $value) {
+            if (in_array($key, $fieldsData)) {
+                $keyParts[] = $value;
+            }
+        }
+
+        if (empty($keyParts)) {
+            $fieldsName = implode(' ', $fieldsData);
+            throw new Exception("Threre are no field with name $fieldsName, impossible to index");
+        }
+
+        return implode('_', $keyParts);
     }
 }
