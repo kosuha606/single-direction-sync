@@ -5,7 +5,7 @@ namespace kosuha606\SingleDirectionSync;
 use kosuha606\VirtualModel\VirtualModelManager;
 use Exception;
 
-class SingleDirectionSinchronizator
+class SingleDirectionSynchronizator
 {
     /**
      * @var array
@@ -31,7 +31,7 @@ class SingleDirectionSinchronizator
      */
     private $checksumFieldName;
 
-    /** @var SingleDirectionSinchronizatorProviderInterface */
+    /** @var SingleDirectionSynchronizatorProviderInterface */
     private $provider;
 
     /**
@@ -53,7 +53,7 @@ class SingleDirectionSinchronizator
         $this->importModelUniqIdField = $importModelUniqIdField;
         $this->checksumFields = $checksumFields;
         $this->checksumFieldName = $checksumFieldName;
-        $this->provider = VirtualModelManager::getInstance()->getProvider(SingleDirectionSinchronizatorProviderInterface::class);
+        $this->provider = VirtualModelManager::getInstance()->getProvider(SingleDirectionSynchronizatorProviderInterface::class);
     }
 
     /**

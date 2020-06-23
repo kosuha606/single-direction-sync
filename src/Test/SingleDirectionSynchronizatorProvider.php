@@ -2,16 +2,16 @@
 
 namespace kosuha606\SingleDirectionSync\Test;
 
-use kosuha606\SingleDirectionSync\SingleDirectionSinchronizatorProviderInterface;
+use kosuha606\SingleDirectionSync\SingleDirectionSynchronizatorProviderInterface;
 use kosuha606\VirtualModel\Example\MemoryModelProvider;
 
-class SingleDirectionSinchronizatorProvider extends MemoryModelProvider implements SingleDirectionSinchronizatorProviderInterface
+class SingleDirectionSynchronizatorProvider extends MemoryModelProvider implements SingleDirectionSynchronizatorProviderInterface
 {
     public $statistic = [];
 
     public function type()
     {
-        return SingleDirectionSinchronizatorProviderInterface::class;
+        return SingleDirectionSynchronizatorProviderInterface::class;
     }
 
     public function handleUpdate($models)

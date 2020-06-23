@@ -1,11 +1,5 @@
 <?php
 
-/**
- * one update
- * five create
- * zero delete
- */
-
 return [
     'first' => [
         'existed' => [

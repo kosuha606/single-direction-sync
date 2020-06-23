@@ -1,13 +1,13 @@
 <?php
 
-use kosuha606\SingleDirectionSync\SingleDirectionSinchronizator;
-use kosuha606\SingleDirectionSync\Test\SingleDirectionSinchronizatorProvider;
+use kosuha606\SingleDirectionSync\SingleDirectionSynchronizator;
+use kosuha606\SingleDirectionSync\Test\SingleDirectionSynchronizatorProvider;
 use kosuha606\VirtualModel\VirtualModelManager;
 use PHPUnit\Framework\TestCase;
 
 class BaseTest extends TestCase
 {
-    /** @var SingleDirectionSinchronizatorProvider */
+    /** @var SingleDirectionSynchronizatorProvider */
     public $syncProvider;
 
     /**
@@ -15,7 +15,7 @@ class BaseTest extends TestCase
      */
     public function setUp()
     {
-        $this->syncProvider = new SingleDirectionSinchronizatorProvider();
+        $this->syncProvider = new SingleDirectionSynchronizatorProvider();
         VirtualModelManager::getInstance()->setProvider($this->syncProvider);
         parent::setUp();
     }
@@ -26,7 +26,7 @@ class BaseTest extends TestCase
     public function testFirst()
     {
         $data = require('data.php');
-        $synchronizator = new SingleDirectionSinchronizator(
+        $synchronizator = new SingleDirectionSynchronizator(
             $data['first']['existed'],
             $data['first']['import'],
             ['product_id', 'size_value'],
@@ -46,7 +46,7 @@ class BaseTest extends TestCase
     public function testDelete()
     {
         $data = require('data.php');
-        $synchronizator = new SingleDirectionSinchronizator(
+        $synchronizator = new SingleDirectionSynchronizator(
             $data['delete']['existed'],
             $data['delete']['import'],
             ['product_id', 'size_value'],
@@ -66,7 +66,7 @@ class BaseTest extends TestCase
     public function testSkip()
     {
         $data = require('data.php');
-        $synchronizator = new SingleDirectionSinchronizator(
+        $synchronizator = new SingleDirectionSynchronizator(
             $data['skip']['existed'],
             $data['skip']['import'],
             ['product_id', 'size_value'],
