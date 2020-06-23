@@ -7,6 +7,8 @@ use kosuha606\VirtualModel\Example\MemoryModelProvider;
 
 class SingleDirectionSinchronizatorProvider extends MemoryModelProvider implements SingleDirectionSinchronizatorProviderInterface
 {
+    public $statistic = [];
+
     public function type()
     {
         return SingleDirectionSinchronizatorProviderInterface::class;
@@ -14,17 +16,17 @@ class SingleDirectionSinchronizatorProvider extends MemoryModelProvider implemen
 
     public function handleUpdate($models)
     {
-        // TODO: Implement handleUpdate() method.
+        $this->statistic['update'] = count($models);
     }
 
     public function handleCreate($models)
     {
-        // TODO: Implement handleCreate() method.
+        $this->statistic['create'] = count($models);
     }
 
     public function handleDelete($models)
     {
-        // TODO: Implement handleDelete() method.
+        $this->statistic['delete'] = count($models);
     }
 
 }
