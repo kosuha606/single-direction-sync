@@ -39,13 +39,14 @@ class SingleDirectionSynchronizator
      * @param $importedModels (Array of models what come from external data storage)
      * @param string $importModelUniqIdField (Uniq external model id)
      * @param array $checksumFields (Array of model uniq fields, needed to check if data was changed)
+     * @param string|null $checksumFieldName (Checksum field in existed models, if false then checksum will calc everytime)
      * @throws \Exception
      */
     public function __construct(
         $existedModels,
         $importedModels,
         array $importModelUniqIdField = ['import_id'],
-        $checksumFieldName = 'checksum',
+        $checksumFieldName = false,
         array $checksumFields = ['id']
     ) {
         $this->existedModels = $existedModels;
@@ -64,18 +65,20 @@ class SingleDirectionSynchronizator
         $existedModels = $this->indexByField($this->importModelUniqIdField, $this->existedModels);
         $importedModels = $this->indexByField($this->importModelUniqIdField, $this->importedModels);
         $toCreateModels = $toUpdateModels = [];
+        $checksumFieldName = $this->checksumFieldName ?: 'checksum';
 
         foreach ($importedModels as $importedModelUniqKey => $importedModel) {
-            $importedModel[$this->checksumFieldName] = $this->generateChecksumHash($importedModel);
+            $importedModel[$checksumFieldName] = $this->generateChecksumHash($importedModel);
 
             if (isset($existedModels[$importedModelUniqKey])) {
                 $existedModel = $existedModels[$importedModelUniqKey];
 
-                if (!isset($existedModel[$this->checksumFieldName])) {
-                    throw new Exception("There are no checksum field {$this->checksumFieldName} in existed model, impossible to handle synchronization");
+                if (!isset($existedModel[$checksumFieldName])) {
+                    // If no checksum field then generate it
+                    $existedModel[$checksumFieldName] = $this->generateChecksumHash($existedModel);
                 }
 
-                if ($importedModel[$this->checksumFieldName] !== $existedModel[$this->checksumFieldName]) {
+                if ($importedModel[$checksumFieldName] !== $existedModel[$checksumFieldName]) {
                     $toUpdateModels[] = $importedModel;
                 } else {
                     // If checksums are equal, then just skip it

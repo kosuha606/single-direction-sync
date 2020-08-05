@@ -3,4 +3,7 @@
     <testsuite name="Application">
         <directory>./tests/src</directory>
     </testsuite>
+    <listeners>
+        <listener class="TestDurationListener" file="./tests/TestDurationListener.php" />
+    </listeners>
 </phpunit>
